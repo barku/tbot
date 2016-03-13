@@ -10,26 +10,26 @@ public:
     LED();
     ~LED();
     
-    bool CheckPinIsValid(uint8_t led_pin);
-    bool SetPin(uint8_t led_pin);
+    bool checkPinIsValid(uint8_t ledPin);
+    bool setPin(uint8_t ledPin);
     
-    void On(void);
-    void Off(void);
+    void on(void);
+    void off(void);
 
-    bool SetDuty(uint16_t led_duty_on_ms, uint16_t led_duty_off_ms);
-    void Update(long ms);
+    bool setDuty(uint16_t ledDutyOnMs, uint16_t ledDutyOffMs);
+    void update(long ms);
 
 private:
-    bool     pin_inited;
+    bool     pinInited;
     uint8_t  pin;
     
-    uint8_t  state_on;
+    uint8_t  stateOn;
     
-    uint16_t duty_on_ms;
-    uint16_t duty_off_ms;
+    uint16_t dutyOnMs;
+    uint16_t dutyOffMs;
     
-    uint32_t state_last_change_ms;
-    uint32_t state_next_change_ms;
+    uint32_t stateLastChangeMs;
+    uint32_t stateNextChangeMs;
 };
 
 #endif // #ifndef _LED_H_

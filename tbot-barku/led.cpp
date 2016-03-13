@@ -2,119 +2,117 @@
 #include "led.h"
 
 // valid LED pins on makeblock orion
-static const unsigned char valid_pins[] = {0,1,13};
+static const unsigned char validPins[] = {0,1,13};
 
 LED::LED()
 {
-    pin_inited           = false;
+    pinInited           = false;
     pin                  = 0;
 
-    state_on             = false;
-    duty_on_ms           = 0;
-    duty_off_ms          = 0;
+    stateOn             = false;
+    dutyOnMs           = 0;
+    dutyOffMs          = 0;
     
-    state_last_change_ms = 0;
-    state_next_change_ms = 0;
+    stateLastChangeMs = 0;
+    stateNextChangeMs = 0;
 }
 
 LED::~LED()
 {
-    pin_inited = false;
+    pinInited = false;
 }
 
-bool LED::CheckPinIsValid(uint8_t led_pin)
+bool LED::checkPinIsValid(uint8_t ledPin)
 {
-    uint8_t nr_of_valid_pins;
+    uint8_t nrOfValidPins;
 
-    nr_of_valid_pins = sizeof(valid_pins);
+    nrOfValidPins = sizeof(validPins);
 
-//    Serial.println("%s nr_of_valid_pins = %d", __FUNCTION__, nr_of_valid_pins);
-
-    for (int i = 0; i < nr_of_valid_pins; i++)
+    for (int i = 0; i < nrOfValidPins; i++)
     {
-       if (led_pin == valid_pins[i])
+       if (ledPin == validPins[i])
           return true;
     }
     
     return false;
 }
 
-bool LED::SetPin(uint8_t led_pin)
+bool LED::setPin(uint8_t ledPin)
 {
-    if (!CheckPinIsValid(led_pin)) return false;
+    if (!checkPinIsValid(ledPin)) return false;
 
-    pin = led_pin;
+    pin = ledPin;
     pinMode(pin, OUTPUT);
-    pin_inited = true;
+    pinInited = true;
 
-    Off();
+    off();
 }
 
-void LED::On(void)
+void LED::on(void)
 {
-    if (pin_inited != true) return;
+    if (pinInited != true) return;
 
     digitalWrite(pin, HIGH);
-    state_on = true;
+    stateOn = true;
 }
 
-void LED::Off(void)
+void LED::off(void)
 {
-    if (pin_inited != true) return;
+    if (pinInited != true) return;
 
     digitalWrite(pin, LOW);
-    state_on = false;
+    stateOn = false;
 }
 
-bool LED::SetDuty(uint16_t led_duty_on_ms, uint16_t led_duty_off_ms)
+bool LED::setDuty(uint16_t ledDutyOnMs, uint16_t ledDutyOffMs)
 {
-    if (pin_inited != true) return false;
+    if (pinInited != true) return false;
 
-    if ((led_duty_on_ms >= 1) && (led_duty_off_ms >= 1))
+    if ((ledDutyOnMs >= 1) && (ledDutyOffMs >= 1))
     {
-        duty_on_ms  = led_duty_on_ms;
-        duty_off_ms = led_duty_off_ms;
+        dutyOnMs  = ledDutyOnMs;
+        dutyOffMs = ledDutyOffMs;
         return true;
     }
     else
     {
-        duty_on_ms  = 0;
-        duty_off_ms = 0;
+        dutyOnMs  = 0;
+        dutyOffMs = 0;
         return false;
     }
 }
 
-void LED::Update(long cms)
+void LED::update(long cms)
 {
-    if (pin_inited != true) return;
-    if ((duty_on_ms == 0) || (duty_off_ms == 0)) return;
+    if (pinInited != true) return;
+    if ((dutyOnMs == 0) || (dutyOffMs == 0)) return;
 
-    if ((state_last_change_ms == 0) || (state_next_change_ms == 0)) 
+    if ((stateLastChangeMs == 0) || (stateNextChangeMs == 0)) 
     {
-        state_last_change_ms = cms;
-        if (state_on)
+        stateLastChangeMs = cms;
+        if (stateOn)
         {
-            Off();
-            state_next_change_ms = state_last_change_ms + duty_off_ms;
+            off();
+            stateNextChangeMs = stateLastChangeMs + dutyOffMs;
         }
         else
         {
-            On();
-            state_next_change_ms = state_last_change_ms + duty_on_ms;
+            on();
+            stateNextChangeMs = stateLastChangeMs + dutyOnMs;
         }
     }
-    else if (cms >= state_next_change_ms)
+    else if (cms >= stateNextChangeMs)
     {
-        state_last_change_ms = cms;
-        if (state_on)
+        stateLastChangeMs = cms;
+        if (stateOn)
         {
-            Off();
-            state_next_change_ms = state_last_change_ms + duty_off_ms;
+            off();
+            stateNextChangeMs = stateLastChangeMs + dutyOffMs;
         }
         else
         {        
-            On();
-            state_next_change_ms = state_last_change_ms + duty_on_ms;
+            on();
+            stateNextChangeMs = stateLastChangeMs + dutyOnMs;
         }
     }
 }
