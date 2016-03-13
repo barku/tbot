@@ -3,13 +3,14 @@
 #include <Makeblock.h>
 
 #include "led.h"
+#include "usr.h"
 
 //******************************************************************************
 
 // blue LED as heartbeat
 
 #define LED_BLUE_PIN         13                  
-#define LED_BLUE_ON_OFF_MS   500
+#define LED_BLUE_ON_OFF_MS   700
 
 LED LedBlue;
 
@@ -101,10 +102,10 @@ void setup()
 {
     Serial.begin(9600);                          // configure serial port baud rate and start serial port
     Serial.println("");
-    Serial.println("...ABC...");
+    Serial.println(".ABC.");
 
-    LedBlue.SetPin(LED_BLUE_PIN);               // setup on-board blue led as heartbeat for now
-    LedBlue.SetDuty(LED_BLUE_ON_OFF_MS, LED_BLUE_ON_OFF_MS);
+    LedBlue.setPin(LED_BLUE_PIN);               // setup on-board blue led as heartbeat for now
+    LedBlue.setDuty(LED_BLUE_ON_OFF_MS, LED_BLUE_ON_OFF_MS);
     Serial.println("HEARBEAT OK");
 
     IrRecv.begin();                             // start infrared receiver
@@ -112,6 +113,7 @@ void setup()
     irRecvValid = false;
     irRecvValidMs = 0;
     Serial.println("IR RECV  OK");
+
 }
 
 void loop()
@@ -121,14 +123,14 @@ void loop()
     {
         case 0x00:  
         case 0xFF:              break;  // invalid or no irRecvData
-/*            
+/*
         case IR_BUTTON_UP:      break;
         case IR_BUTTON_DOWN:    break;
         case IR_BUTTON_LEFT:    break;
         case IR_BUTTON_RIGHT:   break;
-      
+
         case IR_BUTTON_SETTING: break;
-            
+
         case IR_BUTTON_A:       break;
         case IR_BUTTON_B:       break;
         case IR_BUTTON_C:       break;
@@ -152,8 +154,7 @@ void loop()
     
     // do more stuff here?
     
-      
     // update heartbeat
-    LedBlue.Update(millis());
+    LedBlue.update(millis());
 }
 
