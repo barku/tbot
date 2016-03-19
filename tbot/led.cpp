@@ -1,10 +1,29 @@
+/*****************************************************************************/
+/*                                  COMPANY                                  */
+/*                              www.COMPANY.com                              */
+/*                   (C) Copyright 2016. All Rights Reserved.                */
+/*                                                                           */
+/* File name : led.cpp                                                       */
+/* Author    : author name (author_email@email.com)                          */
+/* Purpose   : Status LED light                                              */
+/*                                                                           */
+/* Revision :                                                                */
+/*    v0.1 : 160312 created by                                               */
+/*                                                                           */
+/*****************************************************************************/
+
+#include "config.h"
+
+#ifdef ENABLE_LED
+
+/******************************************************************************/
 
 #include "led.h"
 
 // valid LED pins on makeblock orion
 static const unsigned char validPins[] = {0,1,13};
 
-LED::LED()
+Led::Led()
 {
     pinInited           = false;
     pin                  = 0;
@@ -17,12 +36,12 @@ LED::LED()
     stateNextChangeMs = 0;
 }
 
-LED::~LED()
+Led::~Led()
 {
     pinInited = false;
 }
 
-bool LED::checkPinIsValid(uint8_t ledPin)
+bool Led::checkPinIsValid(uint8_t ledPin)
 {
     uint8_t nrOfValidPins;
 
@@ -37,7 +56,7 @@ bool LED::checkPinIsValid(uint8_t ledPin)
     return false;
 }
 
-bool LED::setPin(uint8_t ledPin)
+bool Led::setPin(uint8_t ledPin)
 {
     if (!checkPinIsValid(ledPin)) return false;
 
@@ -48,7 +67,7 @@ bool LED::setPin(uint8_t ledPin)
     off();
 }
 
-void LED::on(void)
+void Led::on(void)
 {
     if (pinInited != true) return;
 
@@ -56,7 +75,7 @@ void LED::on(void)
     stateOn = true;
 }
 
-void LED::off(void)
+void Led::off(void)
 {
     if (pinInited != true) return;
 
@@ -64,7 +83,7 @@ void LED::off(void)
     stateOn = false;
 }
 
-bool LED::setDuty(uint16_t ledDutyOnMs, uint16_t ledDutyOffMs)
+bool Led::setDuty(uint16_t ledDutyOnMs, uint16_t ledDutyOffMs)
 {
     if (pinInited != true) return false;
 
@@ -82,7 +101,7 @@ bool LED::setDuty(uint16_t ledDutyOnMs, uint16_t ledDutyOffMs)
     }
 }
 
-void LED::update(long cms)
+void Led::update(long cms)
 {
     if (pinInited != true) return;
     if ((dutyOnMs == 0) || (dutyOffMs == 0)) return;
@@ -116,4 +135,10 @@ void LED::update(long cms)
         }
     }
 }
+
+/******************************************************************************/
+
+#endif // #ifdef ENABLE_LED
+
+/******************************** END OF FILE *********************************/
 

@@ -1,6 +1,25 @@
+/*****************************************************************************/
+/*                                  COMPANY                                  */
+/*                              www.COMPANY.com                              */
+/*                   (C) Copyright 2016. All Rights Reserved.                */
+/*                                                                           */
+/* File name : usr.c                                                         */
+/* Author    : author name (author_email@email.com)                          */
+/* Purpose   : Ultrasonic Radar                                              */
+/*                                                                           */
+/* Revision :                                                                */
+/*    v0.1 : 160312 created by                                               */
+/*                                                                           */
+/*****************************************************************************/
 
 #include <Makeblock.h>
 #include <Arduino.h>
+
+#include "config.h"
+
+#ifdef ENABLE_ULTRASONIC_RADAR
+
+/******************************************************************************/
 
 #include <Servo.h>
 
@@ -20,11 +39,11 @@ MeUltrasonicSensor ultraSensor(PORT_3); /* Ultrasonic module can ONLY be connect
 
 //******************************************************************************
 
-USR::USR()
+Usr::Usr()
 {
     uint8_t deg;
     
-    usrInited      = false;
+    inited      = false;
     servoId        = 0;
 
     deg = 0 - ((USR_STEP_NR / 2) * USR_STEP_DEG);
@@ -35,12 +54,12 @@ USR::USR()
     }
 }
 
-USR::~USR()
+Usr::~Usr()
 {
-    usrInited = false;
+    inited = false;
 }
 
-bool USR::init(uint8_t _servoId)
+bool Usr::init(uint8_t _servoId)
 {
     if (_servoId == 1)
     {
@@ -55,11 +74,11 @@ bool USR::init(uint8_t _servoId)
         return false;  
     }
 
-    usrInited = true;
+    inited = true;
     return true;
 }
 
-bool USR::setAngleDeg(int8_t _servoDeg)
+bool Usr::setAngleDeg(int8_t _servoDeg)
 {
     uint8_t servoVal;
     double dist;
@@ -75,7 +94,7 @@ bool USR::setAngleDeg(int8_t _servoDeg)
     return true;
 }
 
-int8_t getAngleDeg(void)
+int8_t Usr::getAngleDeg(void)
 {
     uint8_t servoDeg;
 
@@ -84,12 +103,12 @@ int8_t getAngleDeg(void)
     return (int8_t) servoDeg;
 }
 
-double USR::getDist(void)
+double Usr::getDist(void)
 {
     return ultraSensor.distanceCm();
 }
 
-bool USR::radarStart(void)
+bool Usr::startScan(void)
 {
     radarRunning = true;
     radarDone = false;
@@ -113,7 +132,7 @@ bool USR::radarStart(void)
     return true;
 }
 
-bool USR::usrUpdate(long cms)
+bool Usr::updateScan(long cms)
 {
     double dist;
     
@@ -200,7 +219,7 @@ bool USR::usrUpdate(long cms)
     return true;
 }
 
-bool USR::radarIsEnded(void)
+bool Usr::scanIsEnded(void)
 {
     if (radarRunning != true)
         return true;
@@ -208,7 +227,7 @@ bool USR::radarIsEnded(void)
     return false;
 }
 
-uint16_t USR::getStepDistMm(uint8_t stepId)
+uint16_t Usr::getStepDistMm(uint8_t stepId)
 {
      if (stepId >= USR_STEP_NR)
      {
@@ -218,14 +237,34 @@ uint16_t USR::getStepDistMm(uint8_t stepId)
      return distArray[stepId];
 }
 
-uint8_t USR::getRetryCount(void)
+uint8_t Usr::getRetryCount(void)
 {
     return retryCount;
 }
 
-uint16_t USR::getUpdateDelayMs(void)
+uint16_t Usr::getUpdateDelayMs(void)
 {
     return stepDelayMs;
 }
 
+uint16_t Usr::getCurrentDistMm(void)
+{
+    float distMm;
+/*
+    distMm = ultraSensor.distanceCm();
+    
+//    Serial.print("getCurrentDistMm ");
+    Serial.println(distMm, 5);
+
+//    distMm *= 10.0;
+*/
+    distMm = 90;    
+    return (uint16_t) distMm;
+}
+
+/******************************************************************************/
+
+#endif // #ifdef ENABLE_ULTRASONIC_RADAR
+
+/******************************** END OF FILE *********************************/
 

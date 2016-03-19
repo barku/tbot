@@ -1,7 +1,25 @@
+/*****************************************************************************/
+/*                                  COMPANY                                  */
+/*                              www.COMPANY.com                              */
+/*                   (C) Copyright 2016. All Rights Reserved.                */
+/*                                                                           */
+/* File name : usr.h                                                         */
+/* Author    : author name (author_email@email.com)                          */
+/* Purpose   : Ultrasonic Radar                                              */
+/*                                                                           */
+/* Revision :                                                                */
+/*    v0.1 : 160312 created by                                               */
+/*                                                                           */
+/*****************************************************************************/
+
 #ifndef _USR_H_
 #define _USR_H_
 
-#include <stdint.h>
+#include "config.h"
+
+#ifdef ENABLE_ULTRASONIC_RADAR
+
+/******************************************************************************/
 
 #define USR_CENTER_OFFSET_DEG -10 // the offset angle in degree when the ultrasonic radar is facing the front
 
@@ -14,26 +32,27 @@
 #define USR_SERVO_1   1
 #define USR_SERVO_2   2
 
-class USR
+class Usr
 {
 public:
-    USR();
-    ~USR();
+    Usr();
+    ~Usr();
     
     bool     init(uint8_t _servoId);
     bool     setAngleDeg(int8_t _servoDeg);
     int8_t   getAngleDeg(void);
     double   getDist(void);
 
-    bool     radarStart(void);
-    bool     usrUpdate(long cms);
-    bool     radarIsEnded(void);
+    bool     startScan(void);
+    bool     updateScan(long cms);
+    bool     scanIsEnded(void);
     uint16_t getStepDistMm(uint8_t stepId);
     uint8_t  getRetryCount(void);
     uint16_t getUpdateDelayMs(void);
+    uint16_t getCurrentDistMm(void);
     
 private:
-    bool     usrInited;      // whether ultrasonic radar is initialized
+    bool     inited;      // whether ultrasonic radar is initialized
     uint8_t  servoId;        // the servoId used for the ultrasonic radar
 
     bool     radarRunning;   // currently performing a radar measuring cycle
@@ -50,6 +69,11 @@ private:
     uint16_t distArray[USR_STEP_NR]; // the distance detected are stored here
 };
 
+/******************************************************************************/
+
+#endif // #ifdef ENABLE_ULTRASONIC_RADAR
+
 #endif // #ifndef _USR_H_
 
+/******************************** END OF FILE *********************************/
 
