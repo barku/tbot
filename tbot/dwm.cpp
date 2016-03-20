@@ -84,6 +84,8 @@ void Dwm::stop(void)
 
 bool Dwm::moveDist(int16_t distMm, int16_t speed, int16_t angleDeg)
 {
+    float ratio;
+    
     angleDeg = clipDeg180(angleDeg);
     if (angleDeg == 0)
     {
@@ -91,11 +93,36 @@ bool Dwm::moveDist(int16_t distMm, int16_t speed, int16_t angleDeg)
         emotor_r.RunTurns((float)-distMm / DWM_WHEEL_MM_PER_MOTOR_TURN, (float) speed);
         return true;
     }
-    else
+    else if (angleDeg < 0)
     {
-        return false;
+        if (angleDeg >= -90)
+        {
+            ratio = (0.0 - (float) angleDeg) / 90.0;
+            
+            emotor_l.RunTurns((float) distMm *        ratio  / DWM_WHEEL_MM_PER_MOTOR_TURN, (float) speed *        ratio );
+            emotor_r.RunTurns((float)-distMm * (1.0 + ratio) / DWM_WHEEL_MM_PER_MOTOR_TURN, (float) speed * (1.0 + ratio));
+        }
+        else
+        {
+           return false;
+        }
+    }
+    else 
+    {
+        if (angleDeg <= 90)
+        {
+            ratio = (float) angleDeg / 90.0;
+            
+            emotor_l.RunTurns((float) distMm * (1.0 + ratio) / DWM_WHEEL_MM_PER_MOTOR_TURN, (float) speed * (1.0 + ratio));
+            emotor_r.RunTurns((float)-distMm *        ratio  / DWM_WHEEL_MM_PER_MOTOR_TURN, (float) speed *        ratio );
+        }
+        else
+        {
+           return false;
+        }
     }
 }
+
 /*
 bool Dwm::moveSpeed(int16_t speed, int16_t angleDeg)
 {

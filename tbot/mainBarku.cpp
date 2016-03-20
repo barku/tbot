@@ -168,7 +168,7 @@ void cmdDir(uint8_t dir)
             Serial.print(rPos, 2);
             Serial.println(")");
             
-            dwm.moveDist(cmdDistMm, cmdSpeed, 0);
+            dwm.moveDist(cmdDistMm, cmdSpeed, -45);
         }
         else if (dir == CMD_DIR_RIGHT)
         {
@@ -182,7 +182,7 @@ void cmdDir(uint8_t dir)
             Serial.print(rPos, 2);
             Serial.println(")");
             
-            dwm.moveDist(cmdDistMm, cmdSpeed, 0);
+            dwm.moveDist(cmdDistMm, cmdSpeed, 45);
         }
         else if (dir == CMD_DIR_STOP)
         {
